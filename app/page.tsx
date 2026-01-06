@@ -9,6 +9,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <Hero />
+      
 
       {/* Gradient Background Blobs */}
       <div className="pointer-events-none absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-400/20 blur-[120px]" />
