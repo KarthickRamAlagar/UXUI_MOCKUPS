@@ -54,6 +54,7 @@ const Hero = () => {
     setLoading(false);
 
     // Navigate -> Project Route
+    router.push(`/project/${projectId}`);
   };
 
   return (
