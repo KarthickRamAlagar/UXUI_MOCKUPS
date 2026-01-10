@@ -14,7 +14,9 @@ import { get } from "http";
 const Page = () => {
   const { projectId } = useParams();
 
-  const [projectDetail, setProjectDetail] = useState<ProjectType | undefined>(undefined);
+  const [projectDetail, setProjectDetail] = useState<ProjectType | undefined>(
+    undefined
+  );
   const [screenConfig, setScreenConfig] = useState<ScreenConfig[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Loading...");
@@ -34,11 +36,23 @@ const Page = () => {
     setLoading(false);
   };
 
+  // useEffect(() => {
+  //   if (projectDetail && screenConfig && screenConfig.length == 0) {
+  //     generateScreenConfig();
+  //   } else if (projectDetail && screenConfig) {
+  //     GenerateScreenUXUI();
+  //   }
+  // }, [projectDetail && screenConfig]);
+
   useEffect(() => {
-    if (projectDetail && screenConfig && screenConfig.length == 0) {
+    if (!projectDetail) return;
+
+    if (screenConfig.length === 0) {
       generateScreenConfig();
+    } else {
+      GenerateScreenUXUI();
     }
-  }, [projectDetail && screenConfig]);
+  }, [projectDetail, screenConfig.length]);
 
   const generateScreenConfig = async () => {
     setLoading(true);
@@ -50,6 +64,56 @@ const Page = () => {
     });
     console.log(result.data);
     getProjectDetail();
+    setLoading(false);
+  };
+
+  // const GenerateScreenUXUI = async () => {
+  //   setLoading(true);
+
+  //   for (let index = 0; index < screenConfig?.length; index++) {
+  //     const screen = screenConfig[index];
+  //     if (screen?.code) return;
+  //     setLoadingMessage("Generating Screen UXUI ..." + index + 1);
+
+  //     // Call API to generate screen UI
+  //     const result = await axios.post("/api/generate-screen-ui", {
+  //       projectId,
+  //       screenId: screen?.screenId,
+  //       screenName: screen?.screenName,
+  //       screenDescription: screen?.screenDescription,
+  //     });
+  //     console.log(result.data);
+  //     setScreenConfig((prev) =>
+  //       prev.map((item, i) => {
+  //         return i === index ? result.data : item;
+  //       })
+  //     );
+  //   }
+  //   setLoading(false);
+  // };
+
+  const GenerateScreenUXUI = async () => {
+    setLoading(true);
+
+    for (let index = 0; index < screenConfig.length; index++) {
+      const screen = screenConfig[index];
+
+      if (screen?.code) continue;
+
+      setLoadingMessage(`Generating Screen UXUI... ${index + 1}`);
+
+      const result = await axios.post("/api/generate-screen-ui", {
+        projectId,
+        screenId: screen.screenId,
+        screenName: screen.screenName,
+        screenDescription: screen.screenDescription,
+      });
+
+      setScreenConfig((prev) =>
+        prev.map((item, i) => (i === index ? result.data : item))
+      );
+    }
+
     setLoading(false);
   };
 
