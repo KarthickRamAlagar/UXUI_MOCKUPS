@@ -5,6 +5,7 @@ import {
   varchar,
   timestamp,
   json,
+  text,
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
@@ -19,6 +20,10 @@ export const ProjectTable = pgTable("projects", {
 
   projectId: varchar().notNull(),
 
+  projectName: varchar(),
+
+  theme: varchar(),
+
   userInput: varchar(),
 
   device: varchar(),
@@ -27,7 +32,19 @@ export const ProjectTable = pgTable("projects", {
 
   config: json(),
 
+  projectVisualDescription: text(),
+
   userId: varchar()
     .references(() => usersTable.email)
     .notNull(),
+});
+
+export const ScreenConfigTable = pgTable("screenConfig", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  projectId: varchar().references(() => ProjectTable.projectId),
+  screenId: varchar(),
+  screenName: varchar(),
+  purpose: varchar(),
+  screenDescription: varchar(),
+  code: text(),
 });
